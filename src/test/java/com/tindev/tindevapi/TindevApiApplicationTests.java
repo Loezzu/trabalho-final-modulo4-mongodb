@@ -1,8 +1,6 @@
 package com.tindev.tindevapi;
 
-import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.entities.UserEntity;
-import com.tindev.tindevapi.enums.ProgLangs;
 import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import org.junit.Test;
@@ -11,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

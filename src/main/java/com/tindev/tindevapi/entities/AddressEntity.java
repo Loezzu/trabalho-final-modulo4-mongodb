@@ -4,11 +4,11 @@ import lombok.*;
 
 import javax.persistence.*;
 
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
 @Entity(name = "address")
 public class AddressEntity {
 
