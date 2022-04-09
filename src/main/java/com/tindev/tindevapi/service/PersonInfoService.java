@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoCreateDTO;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import com.tindev.tindevapi.entities.PersonInfoEntity;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

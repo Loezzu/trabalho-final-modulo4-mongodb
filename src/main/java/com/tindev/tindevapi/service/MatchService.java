@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.match.MatchDTO;
 import com.tindev.tindevapi.entities.MatchEntity;
 import com.tindev.tindevapi.entities.UserEntity;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

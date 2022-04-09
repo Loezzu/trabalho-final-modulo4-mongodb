@@ -5,7 +5,7 @@ import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import lombok.Data;
 
 @Data
-public class UserDTOCompleto extends UserDTO{
+public class UserDTOCompleto extends UserDTOWithoutPassword{
 
     private Integer userId;
     AddressDTO addressDTO;

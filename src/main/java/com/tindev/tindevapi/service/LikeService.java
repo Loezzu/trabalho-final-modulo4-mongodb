@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.like.LikeDTO;
 import com.tindev.tindevapi.entities.LikeEntity;
 import com.tindev.tindevapi.entities.UserEntity;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

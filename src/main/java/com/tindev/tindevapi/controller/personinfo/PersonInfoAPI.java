@@ -2,7 +2,6 @@ package com.tindev.tindevapi.controller.personinfo;
 
 import com.tindev.tindevapi.dto.personInfo.PersonInfoCreateDTO;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

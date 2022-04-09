@@ -44,7 +44,6 @@ public class TokenService {
         String token = Jwts.builder()
                 .setIssuer("tindev-api")
                 .setSubject(user.getUserId().toString())
-                .setSubject(user.getUsername())
                 .claim(CHAVE_REGRA, regras)
                 .setIssuedAt(now)
                 .setExpiration(exp)

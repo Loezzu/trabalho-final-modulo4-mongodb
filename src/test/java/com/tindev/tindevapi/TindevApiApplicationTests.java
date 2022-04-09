@@ -1,7 +1,7 @@
 package com.tindev.tindevapi;
 
 import com.tindev.tindevapi.entities.UserEntity;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

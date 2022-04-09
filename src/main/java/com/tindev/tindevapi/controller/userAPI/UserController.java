@@ -2,7 +2,6 @@ package com.tindev.tindevapi.controller.userAPI;
 
 import com.tindev.tindevapi.dto.user.*;
 import com.tindev.tindevapi.enums.Roles;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -29,14 +28,15 @@ public class UserController implements UserAPI{
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception{
+    public ResponseEntity<UserDTOWithoutPassword> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception{
         return ResponseEntity.ok(userService.createUser(userCreateDTO, role));
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
+    public ResponseEntity<String> updatedUser(@PathVariable("userId") Integer id,
                                                @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
-        return ResponseEntity.ok(userService.updateUser(id, userUpdateDTO));
+        userService.updateUser(id, userUpdateDTO);
+        return ResponseEntity.ok("Usuário Atualizado");
     }
 
     @DeleteMapping("/{userId}")
@@ -56,8 +56,9 @@ public class UserController implements UserAPI{
     }
 
     @PutMapping("/loged-user/update")
-    public ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
-        return ResponseEntity.ok(userService.updateLogedUser(userUpdateDTO));
+    public ResponseEntity<String> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception {
+        userService.updateLogedUser(userUpdateDTO);
+        return ResponseEntity.ok("Usuário Atualizado!");
     }
 
     @DeleteMapping("/loged-user/delete")

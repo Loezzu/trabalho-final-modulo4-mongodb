@@ -2,7 +2,7 @@ package com.tindev.tindevapi.security;
 
 
 import com.tindev.tindevapi.entities.UserEntity;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

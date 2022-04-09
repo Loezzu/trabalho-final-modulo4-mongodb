@@ -2,11 +2,9 @@ package com.tindev.tindevapi.controller.personinfo;
 
 import com.tindev.tindevapi.dto.personInfo.PersonInfoCreateDTO;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.PersonInfoService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

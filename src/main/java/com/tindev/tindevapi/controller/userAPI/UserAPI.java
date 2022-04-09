@@ -2,7 +2,6 @@ package com.tindev.tindevapi.controller.userAPI;
 
 import com.tindev.tindevapi.dto.user.*;
 import com.tindev.tindevapi.enums.Roles;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -39,22 +38,22 @@ public interface UserAPI {
             @ApiResponse(code = 200, message = "Retorna um usuário com um id"),
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
-    ResponseEntity<UserDTO> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception;
+    ResponseEntity<UserDTOWithoutPassword> postUser(@Valid @RequestBody UserCreateDTO userCreateDTO, @RequestParam Roles role) throws Exception;
 
     @ApiOperation(value = "Atualiza um usuário")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Retorna um usuário atualizado pelo id"),
+            @ApiResponse(code = 200, message = "Retorna uma mensagem de sucesso!"),
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
-    ResponseEntity<UserDTO> updatedUser(@PathVariable("userId") Integer id,
+    ResponseEntity<String> updatedUser(@PathVariable("userId") Integer id,
                                          @Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception;
 
     @ApiOperation(value = "Atualiza o usuário logado")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Retorna o usuário logado atualizado"),
+            @ApiResponse(code = 200, message = "Retorna uma mensagem de sucesso!"),
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
-    ResponseEntity<UserDTO> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception;
+    ResponseEntity<String> updatedLogedUser(@Valid @RequestBody UserUpdateDTO userUpdateDTO) throws Exception;
 
     @ApiOperation(value = "Deleta um usuário")
     @ApiResponses(value = {

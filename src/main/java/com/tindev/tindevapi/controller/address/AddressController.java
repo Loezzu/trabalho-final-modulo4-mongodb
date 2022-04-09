@@ -2,7 +2,6 @@ package com.tindev.tindevapi.controller.address;
 
 import com.tindev.tindevapi.dto.address.AddressCreateDTO;
 import com.tindev.tindevapi.dto.address.AddressDTO;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.AddressService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;

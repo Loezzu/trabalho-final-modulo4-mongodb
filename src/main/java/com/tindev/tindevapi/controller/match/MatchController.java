@@ -1,11 +1,9 @@
 package com.tindev.tindevapi.controller.match;
 
 import com.tindev.tindevapi.dto.match.MatchDTO;
-import com.tindev.tindevapi.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.MatchService;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
