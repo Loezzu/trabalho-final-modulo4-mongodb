@@ -2,11 +2,9 @@ package com.tindev.tindevapi.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.tindev.tindevapi.dto.address.AddressDTO;
+import com.tindev.tindevapi.entities.AddressEntity;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import com.tindev.tindevapi.dto.user.*;
-import com.tindev.tindevapi.entities.AddressEntity;
-import com.tindev.tindevapi.entities.PersonInfoEntity;
 import com.tindev.tindevapi.entities.RoleEntity;
 import com.tindev.tindevapi.entities.UserEntity;
 import com.tindev.tindevapi.enums.Roles;
@@ -18,6 +16,7 @@ import com.tindev.tindevapi.repository.RoleRepository;
 import com.tindev.tindevapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,37 +63,23 @@ public class UserService {
 
     public UserDTOWithoutPassword createUser(UserCreateDTO userCreateDTO, Roles role) throws Exception {
         log.info("Calling the Create user method");
-
-        UserEntity userEntity = objectMapper.convertValue(userCreateDTO, UserEntity.class);
-        AddressEntity addressEntity = addressRepository.findById(userEntity.getAddressId())
-                .orElseThrow(() -> new Exception("Address not found"));
-        PersonInfoEntity personInfoEntity = personInfoRepository.findById(userEntity.getPersoInfoId())
-                .orElseThrow(() -> new Exception("Person info not found"));
-
-        RoleEntity userRole = roleRepository.findById(role.getRole()).orElseThrow(() -> new RegraDeNegocioException("Role not found!"));
-        userEntity.setRole(userRole);
-
-        userEntity.setAddress(addressEntity);
-        userEntity.setAddressId(addressEntity.getIdAddress());
-        userEntity.setPersonInfoEntity(personInfoEntity);
-        userEntity.setPersoInfoId(personInfoEntity.getIdPersonInfo());
+        var userEntity = new UserEntity();
+        BeanUtils.copyProperties(userCreateDTO, userEntity, "password");
+        userEntity.setAddress(addressRepository.findById(userEntity.getAddressId()).orElseThrow(() -> new RegraDeNegocioException("Address not found")));
+        userEntity.setPersonInfoEntity(personInfoRepository.findById(userEntity.getPersoInfoId()).orElseThrow(() -> new RegraDeNegocioException("PersonInfo not found")));
         userEntity.setPassword(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()));
+        userEntity.setRole(roleRepository.findById(role.getRole()).orElseThrow(() -> new RegraDeNegocioException("Role not found!")));
 
         logService.logPost(TipoLog.USER,"User "+ userEntity.getUsername() +" created");
         userRepository.save(userEntity);
-
 
         return objectMapper.convertValue(userCreateDTO, UserDTOWithoutPassword.class);
     }
 
     public void updateUser(Integer id, UserUpdateDTO userUpdated) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        UserEntity userEntity = userRepository.getById(id);
-        userEntity.setGender(userUpdated.getGender());
+        var userEntity = userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        BeanUtils.copyProperties(userUpdated, userEntity, "password");
         userEntity.setPassword(new BCryptPasswordEncoder().encode(userUpdated.getPassword()));
-        userEntity.setUsername(userUpdated.getUsername());
-        userEntity.setProgLangs(userUpdated.getProgLangs());
-        userEntity.setPref(userUpdated.getPref());
         logService.logPost(TipoLog.USER,"User "+userEntity.getUsername()+  " updated");
         userRepository.save(userEntity);
     }
@@ -113,7 +98,6 @@ public class UserService {
 
     public void deleteUser(Integer id) throws RegraDeNegocioException {
         userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-
         userRepository.deleteById(id);
     }
 
@@ -156,7 +140,8 @@ public class UserService {
 
     private UserDTOCompleto getUserComplete(UserEntity userEntity) {
         UserDTOCompleto userDTOCompleto = objectMapper.convertValue(userEntity, UserDTOCompleto.class);
-        userDTOCompleto.setAddressDTO(objectMapper.convertValue(userEntity.getAddress(), AddressDTO.class));
+        userDTOCompleto.setAddressDTO(objectMapper.convertValue(userEntity.getAddress(), AddressEntity.class));
+        userDTOCompleto.setAddressDTO(objectMapper.convertValue(userEntity.getAddress(), AddressEntity.class));
         userDTOCompleto.setPersonInfoDTO(objectMapper.convertValue(userEntity.getPersonInfoEntity(), PersonInfoDTO.class));
         return userDTOCompleto;
     }

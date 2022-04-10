@@ -66,7 +66,6 @@ public class AddressService {
 
     public void deleteAddress(Integer id) throws RegraDeNegocioException {
         addressRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-
         addressRepository.deleteById(id);
     }
 

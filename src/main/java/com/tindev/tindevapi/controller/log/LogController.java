@@ -14,7 +14,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class LogController {
 
-
     private final LogService logService;
 
     @GetMapping("/list")
@@ -27,16 +26,10 @@ public class LogController {
         return logService.listByTipoLog(tipoLog);
     }
 
-//    @PostMapping("/save-user")
-//    public void save(@RequestParam String descricao) {
-//        logService.logUser(descricao);
-//    }
-
     @PostMapping("/saveLog")
     public void save(@RequestParam String descricao, @RequestParam TipoLog tipoLog) {
         logService.logPost(tipoLog, descricao);
     }
-
 }
 
 
