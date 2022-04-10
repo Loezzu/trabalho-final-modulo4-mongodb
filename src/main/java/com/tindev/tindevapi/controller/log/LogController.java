@@ -27,9 +27,14 @@ public class LogController {
         return logService.listByTipoLog(tipoLog);
     }
 
-    @PostMapping("/save-user")
-    public void save(@RequestParam String descricao) {
-        logService.logUser(descricao);
+//    @PostMapping("/save-user")
+//    public void save(@RequestParam String descricao) {
+//        logService.logUser(descricao);
+//    }
+
+    @PostMapping("/saveLog")
+    public void save(@RequestParam String descricao, @RequestParam TipoLog tipoLog) {
+        logService.logPost(tipoLog, descricao);
     }
 
 }

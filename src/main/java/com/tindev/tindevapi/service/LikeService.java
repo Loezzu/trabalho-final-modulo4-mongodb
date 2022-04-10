@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.like.LikeDTO;
 import com.tindev.tindevapi.entities.LikeEntity;
 import com.tindev.tindevapi.entities.UserEntity;
+import com.tindev.tindevapi.enums.TipoLog;
 import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.LikeRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class LikeService {
     private final ObjectMapper objectMapper;
     private final MatchService matchService;
     private final UserService userService;
+    private final LogService logService;
 
     public List<LikeDTO> listAllLikes() {
         return likeRepository.findAll()
@@ -39,6 +41,7 @@ public class LikeService {
     public LikeDTO giveLike(Integer userId, Integer likedUserId) throws Exception {
         if (likeRepository.findByUserIdAndLikedUserId(userId, likedUserId) != null) {
             throw new RegraDeNegocioException("like already exists");
+
         }
         LikeEntity likeEntity = new LikeEntity();
         likeEntity.setUserId(userId);
@@ -52,16 +55,20 @@ public class LikeService {
                 likeRepository.findByLikedUserIdAndUserId(userId, likedUserId) != null) {
             matchService.addMatch(userId, likedUserId);
         }
+
+        logService.logPost(TipoLog.LIKE,"giveLike userId " + userId +" likedUserId "+likedUserId);
         return objectMapper.convertValue(likeEntity, LikeDTO.class);
     }
 
     public void deleteLike(Integer id) throws RegraDeNegocioException {
         likeRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+
         likeRepository.deleteById(id);
     }
 
     public void deleteLikeByUserId(Integer id) throws RegraDeNegocioException {
         userService.getUserById(id);
+
         likeRepository.deleteAll(likeRepository.findAllByUserId(id));
     }
 
@@ -70,6 +77,7 @@ public class LikeService {
     }
 
     public LikeDTO giveLikeByLogedUser(Integer likedUserId) throws Exception {
+        logService.logPost(TipoLog.LIKE,"giveLikeByLogedUser likedUserId " + likedUserId);
         return giveLike(userService.getLogedUserId(), likedUserId);
     }
 }

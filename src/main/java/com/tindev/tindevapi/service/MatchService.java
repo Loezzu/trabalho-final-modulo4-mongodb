@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.match.MatchDTO;
 import com.tindev.tindevapi.entities.MatchEntity;
 import com.tindev.tindevapi.entities.UserEntity;
+import com.tindev.tindevapi.enums.TipoLog;
 import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final UserService userService;
     private final ObjectMapper objectMapper;
+    private final LogService logService;
 
     public List<MatchDTO> list() {
         return matchRepository.findAll()
@@ -49,6 +51,7 @@ public class MatchService {
             match.setNameSecond(userService.getUserById(userid2).getUsername());
             match.setUserEntityFirst(objectMapper.convertValue(userService.getUserById(userid1), UserEntity.class));
             match.setUserEntitySecond(objectMapper.convertValue(userService.getUserById(userid2), UserEntity.class));
+            logService.logPost(TipoLog.MATCH, "Match between " + userid1 + " and " + userid2);
             return objectMapper.convertValue(matchRepository.save(match), MatchDTO.class);
         } else {
             throw new RegraDeNegocioException("Didn't match this time!");
