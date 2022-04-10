@@ -4,6 +4,7 @@ import com.tindev.tindevapi.dto.log.LogDTO;
 import com.tindev.tindevapi.enums.TipoLog;
 import com.tindev.tindevapi.service.LogService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 @RequestMapping("/log")
 @RequiredArgsConstructor
 public class LogController {
+
 
     private final LogService logService;
 
@@ -25,8 +27,12 @@ public class LogController {
         return logService.listByTipoLog(tipoLog);
     }
 
-    @PostMapping("/save")
+    @PostMapping("/save-user")
     public void save(@RequestParam String descricao) {
         logService.logUser(descricao);
     }
+
 }
+
+
+
