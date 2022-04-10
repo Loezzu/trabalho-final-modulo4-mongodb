@@ -15,6 +15,8 @@ import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
 import com.tindev.tindevapi.repository.RoleRepository;
 import com.tindev.tindevapi.repository.UserRepository;
+import com.tindev.tindevapi.service.AddressService;
+import com.tindev.tindevapi.service.LogService;
 import com.tindev.tindevapi.service.UserService;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +26,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.validation.constraints.Null;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -46,7 +49,13 @@ public class UserServiceTest {
     private RoleRepository roleRepository;
 
     @Mock
+    private LogService logService;
+
+    @Mock
     private ObjectMapper objectMapper = new ObjectMapper();
+
+    @Mock
+    private AddressService addressService;
 
     @InjectMocks
     private UserService userService;
@@ -64,14 +73,15 @@ public class UserServiceTest {
         UserEntity userEntity = UserEntity.builder().userId(1).AddressId(1).PersoInfoId(1).build();
         UserCreateDTO userCreateDTO = getUserCreate();
 
-        when(objectMapper.convertValue(any(UserCreateDTO.class), eq(UserEntity.class))).thenReturn(userEntity);
+//        when(objectMapper.convertValue(any(UserCreateDTO.class), eq(UserEntity.class))).thenReturn(userEntity);
         when(roleRepository.findById(anyInt())).thenReturn(Optional.ofNullable(roleEntity));
         when(addressRepository.findById(anyInt())).thenReturn(Optional.ofNullable(addressEntity));
         when(personInfoRepository.findById(anyInt())).thenReturn(Optional.ofNullable(personInfoEntity));
+        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
         userService.createUser(userCreateDTO, Roles.FREE);
 
-        verify(userRepository, times(1)).save(userEntity);
+        verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
 
@@ -88,10 +98,17 @@ public class UserServiceTest {
 
     }
 
+
+
+
+
+
     @Test(expected = RegraDeNegocioException.class)
     public void lancarExceptionQuandoIDNaoEncontrado() throws RegraDeNegocioException {
         userService.deleteUser(20);
     }
+
+
 
     private UserCreateDTO getUserCreate(){
         UserCreateDTO userCreateDTO = new UserCreateDTO();

@@ -24,11 +24,6 @@ public class LogService {
     public List<LogDTO> listByTipoLog(TipoLog tipoLog) {
         return logTindevClient.listByTipoLog(tipoLog);
     }
-//
-//    public void logUser(String descricao) {
-//        System.out.println(descricao);
-//        logTindevClient.logUser(descricao);
-//    }
 
     public void logPost(TipoLog tipoLog, String descricao) {
         log.info(descricao);

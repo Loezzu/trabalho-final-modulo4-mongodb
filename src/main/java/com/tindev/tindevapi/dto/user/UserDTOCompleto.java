@@ -1,6 +1,6 @@
 package com.tindev.tindevapi.dto.user;
 
-import com.tindev.tindevapi.dto.address.AddressDTO;
+import com.tindev.tindevapi.entities.AddressEntity;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import lombok.Data;
 
@@ -8,6 +8,6 @@ import lombok.Data;
 public class UserDTOCompleto extends UserDTOWithoutPassword{
 
     private Integer userId;
-    AddressDTO addressDTO;
+    AddressEntity addressDTO;
     PersonInfoDTO personInfoDTO;
 }
