@@ -9,11 +9,13 @@
         <outputRelativeToContentRoot value="true" />
         <module name="trabalho-final-modulo4-mongodb" />
         <module name="tindev-api" />
+        <module name="git_tindevmongodb4" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="git_tindevmongodb4" options="-parameters" />
       <module name="tindev-api" options="-parameters" />
       <module name="trabalho-final-modulo4-mongodb" options="-parameters" />
     </option>

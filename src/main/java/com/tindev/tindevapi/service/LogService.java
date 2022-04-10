@@ -4,12 +4,15 @@ import com.tindev.tindevapi.client.LogTindevClient;
 import com.tindev.tindevapi.dto.log.LogDTO;
 import com.tindev.tindevapi.enums.TipoLog;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Log
 public class LogService {
 
     private final LogTindevClient logTindevClient;
@@ -23,6 +26,7 @@ public class LogService {
     }
 
     public void logUser(String descricao) {
+        System.out.println(descricao);
         logTindevClient.logUser(descricao);
     }
 }
