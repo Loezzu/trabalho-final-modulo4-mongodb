@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoCreateDTO;
 import com.tindev.tindevapi.dto.personInfo.PersonInfoDTO;
 import com.tindev.tindevapi.entities.PersonInfoEntity;
+import com.tindev.tindevapi.enums.TipoLog;
 import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class PersonInfoService {
     private final PersonInfoRepository personInfoRepository;
     private final ObjectMapper objectMapper;
     private final UserService userService;
+    private final LogService logService;
 
     public List<PersonInfoDTO> listPersonInfo(Integer id) throws RegraDeNegocioException {
         if(id != null) {
@@ -39,6 +41,8 @@ public class PersonInfoService {
     public PersonInfoDTO createPersonInfo(PersonInfoCreateDTO personInfoCreateDTO) {
             PersonInfoEntity personInfoEntity = objectMapper.convertValue(personInfoCreateDTO, PersonInfoEntity.class);
             PersonInfoEntity savedPersonInfoEntity = personInfoRepository.save(personInfoEntity);
+
+        logService.logPost(TipoLog.PERSONINFO, "PersonInfo "+  savedPersonInfoEntity.getIdPersonInfo() + " created");
             return objectMapper.convertValue(savedPersonInfoEntity, PersonInfoDTO.class);
         }
 
@@ -50,6 +54,7 @@ public class PersonInfoService {
             personInfoEntity.setAge(personInfoCreateDTO.getAge());
             personInfoEntity.setEmail(personInfoCreateDTO.getEmail());
             personInfoEntity.setRealName(personInfoCreateDTO.getRealName());
+        logService.logPost(TipoLog.PERSONINFO, "PersonInfo "+  personInfoEntity.getIdPersonInfo() + " updated");
         return  objectMapper.convertValue((personInfoRepository.save(personInfoEntity)), PersonInfoDTO.class);
     }
 
@@ -68,6 +73,7 @@ public class PersonInfoService {
         personInfo.setAge(personInfoCreateDTO.getAge());
         personInfo.setEmail(personInfoCreateDTO.getEmail());
         personInfo.setRealName(personInfoCreateDTO.getRealName());
+        logService.logPost(TipoLog.PERSONINFO, "PersonInfo logedUser"+  personInfo.getIdPersonInfo() + " updated");
         return objectMapper.convertValue(personInfoRepository.save(personInfo), PersonInfoDTO.class);
     }
 

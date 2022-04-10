@@ -26,6 +26,15 @@ public interface LogTindevClient {
     void logUser(@Param("descricao") String descricao);
 
 
+    @RequestLine("POST /log/save-log?descricao={descricao}&tipoLog={tipoLog}")
+    void logPost(@Param("descricao") String descricao, @Param("tipoLog") TipoLog tipoLog);
+
+
+
+
+
 }
+
+
 
 

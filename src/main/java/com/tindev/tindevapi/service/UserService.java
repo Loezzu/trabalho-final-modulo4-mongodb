@@ -10,6 +10,7 @@ import com.tindev.tindevapi.entities.PersonInfoEntity;
 import com.tindev.tindevapi.entities.RoleEntity;
 import com.tindev.tindevapi.entities.UserEntity;
 import com.tindev.tindevapi.enums.Roles;
+import com.tindev.tindevapi.enums.TipoLog;
 import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
@@ -37,6 +38,7 @@ public class UserService {
     private final PersonInfoRepository personInfoRepository;
     private final RoleRepository roleRepository;
     private final ObjectMapper objectMapper;
+    private final LogService logService;
 
     public Optional<UserEntity> findByUsername(String username) throws RegraDeNegocioException {
         return Optional.ofNullable(userRepository.findByUsername(username).orElseThrow(() -> new RegraDeNegocioException("User not found")));
@@ -78,7 +80,9 @@ public class UserService {
         userEntity.setPersoInfoId(personInfoEntity.getIdPersonInfo());
         userEntity.setPassword(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()));
 
+        logService.logPost(TipoLog.USER,"User "+ userEntity.getUsername() +" created");
         userRepository.save(userEntity);
+
 
         return objectMapper.convertValue(userCreateDTO, UserDTOWithoutPassword.class);
     }
@@ -91,6 +95,7 @@ public class UserService {
         userEntity.setUsername(userUpdated.getUsername());
         userEntity.setProgLangs(userUpdated.getProgLangs());
         userEntity.setPref(userUpdated.getPref());
+        logService.logPost(TipoLog.USER,"User "+userEntity.getUsername()+  " updated");
         userRepository.save(userEntity);
     }
 
@@ -102,11 +107,13 @@ public class UserService {
         userEntity.setUsername(userUpdated.getUsername());
         userEntity.setProgLangs(userUpdated.getProgLangs());
         userEntity.setPref(userUpdated.getPref());
+        logService.logPost(TipoLog.USER,"User " +userEntity.getUsername()+ " logged updated");
         userRepository.save(userEntity);
     }
 
     public void deleteUser(Integer id) throws RegraDeNegocioException {
         userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+
         userRepository.deleteById(id);
     }
 
