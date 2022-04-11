@@ -7,11 +7,13 @@ import com.tindev.tindevapi.dto.user.UserDTO;
 import com.tindev.tindevapi.entities.LikeEntity;
 import com.tindev.tindevapi.entities.UserEntity;
 import com.tindev.tindevapi.repository.LikeRepository;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.LikeService;
 import com.tindev.tindevapi.service.LogService;
 import com.tindev.tindevapi.service.MatchService;
 import com.tindev.tindevapi.service.UserService;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,16 +31,13 @@ import static org.mockito.Mockito.*;
 public class LikeTest {
 
     @Mock
-    private  LikeRepository likeRepository;
+    private LikeRepository likeRepository;
 
     @Mock
-    private  ObjectMapper objectMapper;
+    private ObjectMapper objectMapper;
 
     @Mock
-    private  MatchService matchService;
-
-    @Mock
-    private  UserService userService;
+    private UserService userService;
 
     @Mock
     private LogService logService;
@@ -53,15 +52,8 @@ public class LikeTest {
 
 
     @Test
-    public void testLike() throws Exception {
-        LikeEntity likeEntity = LikeEntity.builder()
-                .likeId(1)
-                .userId(1)
-                .usernameUser("usernameUser")
-                .likedUserId(2)
-                .usernameLikedUser("usernameLikedUser")
-                .build();
-        LikeDTO likeDTO = getLikeCreate();
+    public void testGiveLike() throws Exception {
+        LikeEntity likeEntity = getLikeCreate();
 
         UserDTO userDTO = new UserDTO();
 
@@ -73,8 +65,39 @@ public class LikeTest {
         verify(likeRepository).save(any(LikeEntity.class));
     }
 
-    private LikeDTO getLikeCreate() {
-        return LikeDTO.builder()
+    @Test
+    public void testDeleteLike() throws Exception {
+        LikeEntity likeEntity = getLikeCreate();
+
+        when(likeRepository.findById(anyInt())).thenReturn(Optional.of(likeEntity));
+
+        likeService.deleteLike(likeEntity.getLikeId());
+
+        verify(likeRepository).deleteById(likeEntity.getLikeId());
+    }
+
+    @Test
+    public void testDeleteLikeNotFound() {
+        when(likeRepository.findById(anyInt())).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(RegraDeNegocioException.class, () -> {
+            likeService.deleteLike(1);
+        });
+    }
+
+    @Test
+    public void testDeleteLikeByUserId() throws Exception {
+        UserEntity userEntity = new UserEntity();
+
+        when(likeRepository.findAllByUserId(anyInt())).thenReturn(userEntity.getLikes());
+
+        likeService.deleteLikeByUserId(getLikeCreate().getUserId());
+
+        verify(likeRepository).deleteAll(userEntity.getLikes());
+    }
+
+    private LikeEntity getLikeCreate() {
+        return LikeEntity.builder()
                 .likeId(1)
                 .userId(1)
                 .usernameUser("usernameUser")

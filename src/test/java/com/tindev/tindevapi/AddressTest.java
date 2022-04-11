@@ -7,10 +7,12 @@ import com.tindev.tindevapi.entities.AddressEntity;
 import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.AddressService;
+import com.tindev.tindevapi.service.LogService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +26,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 
-@RunWith(SpringRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 @SpringBootTest
 public class AddressTest {
 
@@ -34,6 +36,9 @@ public class AddressTest {
 
     @Mock
     private AddressRepository addressRepository;
+
+    @Mock
+    private LogService logService;
 
 //    @Test
 //    public void deveRetornarNomeDaRuaPorId() throws RegraDeNegocioException {

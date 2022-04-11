@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class UserDTO extends UserCreateDTO {
 
     @ApiModelProperty(value = "The user's ID", example = "1")
