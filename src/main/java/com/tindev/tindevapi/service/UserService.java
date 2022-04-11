@@ -64,7 +64,6 @@ public class UserService {
     }
 
     public UserDTOWithoutPassword createUser(UserCreateDTO userCreateDTO, Roles role) throws Exception {
-        log.info("Calling the Create user method");
         var userEntity = new UserEntity();
         BeanUtils.copyProperties(userCreateDTO, userEntity, "password");
         userEntity.setAddress(addressRepository.findById(userEntity.getAddressId()).orElseThrow(() -> new RegraDeNegocioException("Address not found")));
