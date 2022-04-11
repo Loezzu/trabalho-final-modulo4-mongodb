@@ -24,6 +24,7 @@ public class LikeService {
     private final LogService logService;
 
     public List<LikeDTO> listAllLikes() {
+        logService.logPost(TipoLog.LIKE,"Like list found");
         return likeRepository.findAll()
                 .stream()
                 .map(like ->  objectMapper.convertValue(like, LikeDTO.class))
@@ -32,6 +33,7 @@ public class LikeService {
 
     public List<LikeDTO> listAllLikesByUser(Integer id) throws RegraDeNegocioException {
         userService.getUserById(id);
+        logService.logPost(TipoLog.LIKE,"Found likes of the user with ID: "+id);
         return likeRepository.findAllByUserId(id)
                 .stream()
                 .map(like -> objectMapper.convertValue(like, LikeDTO.class))
@@ -55,29 +57,29 @@ public class LikeService {
                 likeRepository.findByLikedUserIdAndUserId(userId, likedUserId) != null) {
             matchService.addMatch(userId, likedUserId);
         }
-
-        logService.logPost(TipoLog.LIKE,"giveLike userId " + userId +" likedUserId "+likedUserId);
+        logService.logPost(TipoLog.LIKE,"User with ID: " + userId +" liked user with ID: "+likedUserId);
         return objectMapper.convertValue(likeEntity, LikeDTO.class);
     }
 
     public void deleteLike(Integer id) throws RegraDeNegocioException {
         likeRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-
+        logService.logPost(TipoLog.LIKE,"Like with ID: "+id+" deleted");
         likeRepository.deleteById(id);
     }
 
     public void deleteLikeByUserId(Integer id) throws RegraDeNegocioException {
         userService.getUserById(id);
-
+        logService.logPost(TipoLog.LIKE,"Delete likes of the user with ID: "+id);
         likeRepository.deleteAll(likeRepository.findAllByUserId(id));
     }
 
     public void deleteLikesByLogedUser() throws RegraDeNegocioException {
+        logService.logPost(TipoLog.LIKE,"Likes of the loged user deleted");
         deleteLikeByUserId(userService.getIdUserLoged());
     }
 
     public LikeDTO giveLikeByLogedUser(Integer likedUserId) throws Exception {
-        logService.logPost(TipoLog.LIKE,"giveLikeByLogedUser likedUserId " + likedUserId);
+        logService.logPost(TipoLog.LIKE,"Loged user gived like in the user with ID: " + likedUserId);
         return giveLike(userService.getIdUserLoged(), likedUserId);
     }
 }

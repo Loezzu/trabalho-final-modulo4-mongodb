@@ -28,11 +28,13 @@ public class PersonInfoService {
     public List<PersonInfoDTO> listPersonInfo(Integer id) throws RegraDeNegocioException {
         if(id != null) {
             personInfoRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+            logService.logPost(TipoLog.PERSONINFO,"Personinfo " + id+ " found");
             return personInfoRepository.findById(id)
                     .stream()
                     .map(persoInfo -> objectMapper.convertValue(persoInfo, PersonInfoDTO.class))
                     .collect(Collectors.toList());
         }
+        logService.logPost(TipoLog.PERSONINFO,"Personinfo list found");
         return personInfoRepository.findAll()
                 .stream()
                 .map(persoInfo -> objectMapper.convertValue(persoInfo, PersonInfoDTO.class))
@@ -42,7 +44,7 @@ public class PersonInfoService {
     public PersonInfoDTO createPersonInfo(PersonInfoCreateDTO personInfoCreateDTO) {
             PersonInfoEntity personInfoEntity = objectMapper.convertValue(personInfoCreateDTO, PersonInfoEntity.class);
             PersonInfoEntity savedPersonInfoEntity = personInfoRepository.save(personInfoEntity);
-        logService.logPost(TipoLog.PERSONINFO, "PersonInfo "+  personInfoEntity.getIdPersonInfo() + " created");
+            logService.logPost(TipoLog.PERSONINFO, "PersonInfo "+  personInfoEntity.getIdPersonInfo() + " created");
             return objectMapper.convertValue(savedPersonInfoEntity, PersonInfoDTO.class);
         }
 
@@ -60,11 +62,13 @@ public class PersonInfoService {
 
     public void delete(Integer id) throws RegraDeNegocioException {
         personInfoRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.PERSONINFO,"Personinfo " + id+ " deleted");
         personInfoRepository.deleteById(id);
     }
 
     public PersonInfoDTO getLogedUserPersonInfo() throws RegraDeNegocioException {
         PersonInfoEntity personInfo = userService.getLogedUser().getPersonInfoEntity();
+        logService.logPost(TipoLog.PERSONINFO,"Personinfo of the loged user found");
         return objectMapper.convertValue(personInfo, PersonInfoDTO.class);
     }
 

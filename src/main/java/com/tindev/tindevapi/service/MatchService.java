@@ -23,6 +23,7 @@ public class MatchService {
     private final LogService logService;
 
     public List<MatchDTO> list() {
+        logService.logPost(TipoLog.MATCH,"Match list found");
         return matchRepository.findAll()
                 .stream()
                 .map(match -> objectMapper.convertValue(match, MatchDTO.class))
@@ -31,6 +32,7 @@ public class MatchService {
 
     public List<MatchDTO> listByUserId(Integer userid) throws RegraDeNegocioException {
         userService.getUserById(userid);
+        logService.logPost(TipoLog.MATCH,"Matches with user ID: " + userid);
         return matchRepository.findByMatchedUserFirstOrAndMatchedUserSecond(userid)
                 .stream()
                 .map(match -> objectMapper.convertValue(match, MatchDTO.class))
@@ -51,7 +53,7 @@ public class MatchService {
             match.setNameSecond(userService.getUserById(userid2).getUsername());
             match.setUserEntityFirst(objectMapper.convertValue(userService.getUserById(userid1), UserEntity.class));
             match.setUserEntitySecond(objectMapper.convertValue(userService.getUserById(userid2), UserEntity.class));
-            logService.logPost(TipoLog.MATCH, "Match between " + userid1 + " and " + userid2);
+            logService.logPost(TipoLog.MATCH, "Match between user with ID " + userid1 + " and " + userid2);
             return objectMapper.convertValue(matchRepository.save(match), MatchDTO.class);
         } else {
             throw new RegraDeNegocioException("Didn't match this time!");
@@ -60,6 +62,7 @@ public class MatchService {
 
     public void deleteMatch(Integer matchId) throws Exception {
         matchRepository.findById(matchId).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.MATCH,"Match with ID: " +matchId + " deleted!");
         matchRepository.deleteById(matchId);
     }
 
