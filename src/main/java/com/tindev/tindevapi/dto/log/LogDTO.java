@@ -6,6 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -13,6 +16,7 @@ public class LogDTO {
 
     private String id;
 
+    @Enumerated(EnumType.STRING)
     private TipoLog tipoLog;
 
     private String descricao;

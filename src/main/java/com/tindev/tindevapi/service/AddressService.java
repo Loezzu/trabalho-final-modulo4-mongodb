@@ -27,13 +27,15 @@ public class AddressService {
 
     public List<AddressDTO> listAddress(Integer id) throws RegraDeNegocioException {
         if(id != null){
-            addressRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+            AddressEntity address = addressRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+            logService.logPost(TipoLog.ADDRESS,"Address "+ address.getIdAddress() +" listed");
             return addressRepository.findById(id)
                     .stream().map(
                             addressEntity -> objectMapper.convertValue(
                                     addressEntity, AddressDTO.class))
                     .collect(Collectors.toList());
         }
+        logService.logPost(TipoLog.ADDRESS,"Address listed");
         return addressRepository.findAll()
                 .stream()
                 .map(address -> objectMapper.convertValue(address, AddressDTO.class))
@@ -50,40 +52,36 @@ public class AddressService {
 
     public AddressDTO updateAddress(AddressCreateDTO addressCreateDTO, Integer idAddress) throws RegraDeNegocioException{
         addressRepository.findById(idAddress).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-//        AddressEntity addressEntity = objectMapper.convertValue(
-//               (addressRepository.findById(idAddress)), AddressEntity.class);
-//        addressEntity.setIdAddress(idAddress);
-//        addressEntity.setStreet(addressCreateDTO.getStreet());
-//        addressEntity.setNumber(addressCreateDTO.getNumber());
-//        addressEntity.setCity(addressCreateDTO.getCity());
-//        addressEntity.setCep(addressCreateDTO.getCep());
-        var addressEntity = new AddressEntity();
-        BeanUtils.copyProperties(addressCreateDTO, addressEntity);
+        AddressEntity addressEntity = objectMapper.convertValue(
+               (addressRepository.findById(idAddress)), AddressEntity.class);
+        addressEntity.setIdAddress(idAddress);
+        addressEntity.setStreet(addressCreateDTO.getStreet());
+        addressEntity.setNumber(addressCreateDTO.getNumber());
+        addressEntity.setCity(addressCreateDTO.getCity());
+        addressEntity.setCep(addressCreateDTO.getCep());
 
         logService.logPost(TipoLog.ADDRESS,"Address "+ addressEntity.getIdAddress() +" updated");
         return objectMapper.convertValue((addressRepository.save(addressEntity)), AddressDTO.class);
     }
 
     public void deleteAddress(Integer id) throws RegraDeNegocioException {
-        addressRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+       AddressEntity addressEntity = addressRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.ADDRESS,"Address "+ addressEntity.getIdAddress() +" deleted");
         addressRepository.deleteById(id);
     }
 
     public AddressDTO getLogedUserAddress() throws RegraDeNegocioException {
         AddressEntity address = userService.getLogedUser().getAddress();
+        logService.logPost(TipoLog.ADDRESS,"Address "+ address.getIdAddress() +" listed");
         return objectMapper.convertValue(address, AddressDTO.class);
     }
 
     public AddressDTO updateLogedUserAddress(AddressCreateDTO addressCreateDTO) throws RegraDeNegocioException {
-//        AddressEntity address = userService.getLogedUser().getAddress();
-//        address.setStreet(addressCreateDTO.getStreet());
-//        address.setNumber(addressCreateDTO.getNumber());
-//        address.setCity(addressCreateDTO.getCity());
-//        address.setCep(addressCreateDTO.getCep());
-        var address = new AddressEntity();
-        address = userService.getLogedUser().getAddress();
-        BeanUtils.copyProperties(addressCreateDTO, address);
-
+        AddressEntity address = userService.getLogedUser().getAddress();
+        address.setStreet(addressCreateDTO.getStreet());
+        address.setNumber(addressCreateDTO.getNumber());
+        address.setCity(addressCreateDTO.getCity());
+        address.setCep(addressCreateDTO.getCep());
         logService.logPost(TipoLog.ADDRESS,"Address "+ address.getIdAddress() +" updated");
         return objectMapper.convertValue(addressRepository.save(address), AddressDTO.class);
     }

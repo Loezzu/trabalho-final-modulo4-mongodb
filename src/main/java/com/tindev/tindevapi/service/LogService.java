@@ -22,11 +22,10 @@ public class LogService {
     }
 
     public List<LogDTO> listByTipoLog(TipoLog tipoLog) {
-        return logTindevClient.listByTipoLog(tipoLog);
+        return logTindevClient.listByTipoLog(tipoLog.toString());
     }
 
     public void logPost(TipoLog tipoLog, String descricao) {
-        log.info(descricao);
         logTindevClient.logPost(descricao, tipoLog);
     }
 }

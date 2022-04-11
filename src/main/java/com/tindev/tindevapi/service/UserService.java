@@ -45,19 +45,21 @@ public class UserService {
 
     public List<UserDTO> listUsers(Integer id) throws RegraDeNegocioException {
         if (id != null) {
-            userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+            UserEntity user = userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+            logService.logPost(TipoLog.USER,"User "+ user.getUsername() +" found");
             return userRepository.findById(id).stream().map(userEntity ->
                             objectMapper.convertValue(userEntity, UserDTO.class))
                     .collect(Collectors.toList());
         }
-        log.info("Calling the list user method");
+        logService.logPost(TipoLog.USER,"User list found");
         return userRepository.findAll().stream()
                 .map(user -> objectMapper.convertValue(user, UserDTO.class))
                 .collect(Collectors.toList());
     }
 
     public UserDTOCompleto getUserLoged() throws RegraDeNegocioException {
-        UserEntity userLoged = userRepository.getById(getLogedUserId());
+        UserEntity userLoged = userRepository.getById(getIdUserLoged());
+        logService.logPost(TipoLog.USER,"User " +userLoged.getUsername()+ " found");
         return getUserComplete(userLoged);
     }
 
@@ -70,9 +72,8 @@ public class UserService {
         userEntity.setPassword(new BCryptPasswordEncoder().encode(userCreateDTO.getPassword()));
         userEntity.setRole(roleRepository.findById(role.getRole()).orElseThrow(() -> new RegraDeNegocioException("Role not found!")));
 
-        logService.logPost(TipoLog.USER,"User "+ userEntity.getUsername() +" created");
         userRepository.save(userEntity);
-
+        logService.logPost(TipoLog.USER,"User "+ userEntity.getUsername() +" created");
         return objectMapper.convertValue(userCreateDTO, UserDTOWithoutPassword.class);
     }
 
@@ -85,8 +86,8 @@ public class UserService {
     }
 
     public void updateLogedUser(UserUpdateDTO userUpdated) throws RegraDeNegocioException {
-        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        UserEntity userEntity = userRepository.getById(getLogedUserId());
+        userRepository.findById(getIdUserLoged()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        UserEntity userEntity = userRepository.getById(getIdUserLoged());
         userEntity.setGender(userUpdated.getGender());
         userEntity.setPassword(new BCryptPasswordEncoder().encode(userUpdated.getPassword()));
         userEntity.setUsername(userUpdated.getUsername());
@@ -97,44 +98,53 @@ public class UserService {
     }
 
     public void deleteUser(Integer id) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+       UserEntity userEntity =  userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.USER,"User " +userEntity.getUsername()+ " deleted");
         userRepository.deleteById(id);
     }
 
     public UserDTO getUserById(Integer id) throws RegraDeNegocioException {
-        userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+       UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.USER,"User " +userEntity.getUsername()+ " found");
         return objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false).convertValue((userRepository.findById(id)), UserDTO.class);
     }
 
     public List<UserDTOWithoutPassword> listLikesOfTheLogedUser() throws RegraDeNegocioException {
-        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listLikesById(getLogedUserId()).stream()
+       UserEntity user = userRepository.findById(getIdUserLoged()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.USER,"User " +user.getUsername()+ " found");
+        return userRepository.listLikesById(getIdUserLoged()).stream()
                 .map(userEntity -> objectMapper.convertValue(userEntity, UserDTOWithoutPassword.class)).toList();
     }
 
     public List<UserDTOWithoutPassword> listReceivedLikesOfTheLogedUser() throws RegraDeNegocioException {
-        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listReceivedLikesById(getLogedUserId()).stream()
+        UserEntity user = userRepository.findById(getIdUserLoged()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.USER,"User " +user.getUsername()+ " found");
+        return userRepository.listReceivedLikesById(getIdUserLoged()).stream()
                 .map(userEntity -> objectMapper.convertValue(userEntity, UserDTOWithoutPassword.class)).toList();
     }
 
     public List<UserDTOCompleto> listUserDTOComplete(Integer id) throws RegraDeNegocioException {
         if (id == null) {
+            logService.logPost(TipoLog.USER, "List of users found");
             return new ArrayList<>(userRepository.findAll().stream().map(this::getUserComplete).toList());
         } else {
-            userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+           UserEntity user =  userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+            logService.logPost(TipoLog.USER,"User " +user.getUsername()+ " found");
             return new ArrayList<>(userRepository.findAllById(Collections.singleton(id)).stream().map(this::getUserComplete).toList());
         }
     }
 
     public List<UserDTOWithoutPassword> listMatchesOfTheLogedUser() throws RegraDeNegocioException {
-        userRepository.findById(getLogedUserId()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        return userRepository.listMatchesByUserId(getLogedUserId()).stream()
+        UserEntity user = userRepository.findById(getIdUserLoged()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.USER,"User " +user.getUsername()+ " found");
+        return userRepository.listMatchesByUserId(getIdUserLoged()).stream()
                 .map(userEntity -> objectMapper.convertValue(userEntity, UserDTOWithoutPassword.class)).toList();
     }
 
     public void deleteUserLoged() throws RegraDeNegocioException {
-        userRepository.deleteById(getLogedUserId());
+        UserEntity user = userRepository.findById(getIdUserLoged()).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
+        logService.logPost(TipoLog.USER,"User " +user.getUsername()+ " deleted");
+        userRepository.deleteById(user.getUserId());
     }
 
 
@@ -150,14 +160,16 @@ public class UserService {
         try {
             UserEntity userEntity = getLogedUser();
             List<UserEntity> availableUsers = new ArrayList<>();
+            RoleEntity roleEntity = roleRepository.findByName("ROLE_ADMIN");
             for (UserEntity user : userRepository.findAll()) {
-                if(userEntity.getUsername().equals(user.getUsername()) || user.getUserId() == 1){
+                if(userEntity.getUsername().equals(user.getUsername()) || user.getRole().equals(roleEntity)){
                     continue;
                 }
                 if(userEntity.getPref().isCompatible(user.getGender()) && user.getPref().isCompatible(userEntity.getGender())) {
                     availableUsers.add(user);
                 }
             }
+            logService.logPost(TipoLog.USER,"User " +userEntity.getUsername()+ " found");
             return availableUsers.stream().map(user -> objectMapper.convertValue(user, UserDTOWithoutPassword.class))
                     .collect(Collectors.toList());
         }catch (Exception e){
@@ -172,18 +184,15 @@ public class UserService {
         if(userLoged.getRole().equals(userRole)){
             throw new RegraDeNegocioException("Você ja tem esse plano");
         }else {
+            logService.logPost(TipoLog.USER,"User " +userLoged.getUsername()+ " role changed");
             userLoged.setRole(userRole);
             userRepository.save(userLoged);
         }
     }
 
-    protected Integer getLogedUserId() throws RegraDeNegocioException {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserEntity userLoged = findByUsername(username).orElseThrow(() -> new RegraDeNegocioException("Ninguem logado na aplicação!"));
-        return userLoged.getUserId();
-    }
 
-    public Integer getIdUserLoged(){
+
+    protected Integer getIdUserLoged(){
         return Integer.parseInt((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 

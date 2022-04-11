@@ -40,13 +40,10 @@ public class PersonInfoService {
     }
 
     public PersonInfoDTO createPersonInfo(PersonInfoCreateDTO personInfoCreateDTO) {
-//            PersonInfoEntity personInfoEntity = objectMapper.convertValue(personInfoCreateDTO, PersonInfoEntity.class);
-//            PersonInfoEntity savedPersonInfoEntity = personInfoRepository.save(personInfoEntity);
-            var personInfoEntity = new PersonInfoEntity();
-            BeanUtils.copyProperties(personInfoCreateDTO, personInfoEntity);
-            personInfoRepository.save(personInfoEntity);
+            PersonInfoEntity personInfoEntity = objectMapper.convertValue(personInfoCreateDTO, PersonInfoEntity.class);
+            PersonInfoEntity savedPersonInfoEntity = personInfoRepository.save(personInfoEntity);
         logService.logPost(TipoLog.PERSONINFO, "PersonInfo "+  personInfoEntity.getIdPersonInfo() + " created");
-            return objectMapper.convertValue(personInfoEntity, PersonInfoDTO.class);
+            return objectMapper.convertValue(savedPersonInfoEntity, PersonInfoDTO.class);
         }
 
     public PersonInfoDTO updatePersonInfo(PersonInfoCreateDTO personInfoCreateDTO, Integer idPerson) throws RegraDeNegocioException {

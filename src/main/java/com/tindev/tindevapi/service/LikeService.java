@@ -73,12 +73,12 @@ public class LikeService {
     }
 
     public void deleteLikesByLogedUser() throws RegraDeNegocioException {
-        deleteLikeByUserId(userService.getLogedUserId());
+        deleteLikeByUserId(userService.getIdUserLoged());
     }
 
     public LikeDTO giveLikeByLogedUser(Integer likedUserId) throws Exception {
         logService.logPost(TipoLog.LIKE,"giveLikeByLogedUser likedUserId " + likedUserId);
-        return giveLike(userService.getLogedUserId(), likedUserId);
+        return giveLike(userService.getIdUserLoged(), likedUserId);
     }
 }
 
