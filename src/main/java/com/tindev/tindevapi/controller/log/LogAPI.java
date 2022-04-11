@@ -54,4 +54,11 @@ public interface LogAPI {
             @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
             @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
     void save(@RequestParam String descricao, @RequestParam TipoLog tipoLog);
+
+    @ApiOperation(value = "Lista todos os logs pelo tipo")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Retorna os Logs de um tipo específico!"),
+            @ApiResponse(code = 403, message = "Você não tem permissão para acessar este recurso"),
+            @ApiResponse(code = 500, message = "Foi gerada uma exceção"),})
+    List<LogDTO> listByTipo(@RequestParam TipoLog tipoLog);
 }
