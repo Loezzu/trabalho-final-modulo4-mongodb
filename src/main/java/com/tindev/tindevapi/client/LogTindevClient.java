@@ -2,14 +2,12 @@ package com.tindev.tindevapi.client;
 
 
 import com.tindev.tindevapi.dto.log.LogDTO;
+import com.tindev.tindevapi.dto.log.LogDTOContador;
 import com.tindev.tindevapi.enums.TipoLog;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -20,12 +18,17 @@ public interface LogTindevClient {
     @RequestLine("GET /log/list")
     List<LogDTO> listAll();
 
-   @RequestLine("GET /log/list-by-tipo-log?tipoLog={tipoLog}")
-   List<LogDTO> listByTipoLog(@Param("tipoLog") String tipoLog);
+    @RequestLine("GET /log/list-by-tipo-log?tipoLog={tipoLog}")
+    List<LogDTO> listByTipoLog(@Param("tipoLog") String tipoLog);
 
-//    @RequestLine("POST /log/save-user?descricao={descricao}")
-//    void logUser(@Param("descricao") String descricao);
+    @RequestLine("GET /log/count-by-tipo-log")
+    List<LogDTOContador> groupByTipoLogAndCount();
 
+    @RequestLine("GET /log/find-all-by-data?data={data}")
+    List<LogDTO> getByData(@Param("data") String data);
+
+    @RequestLine("GET /log/count-logs-by-tipo?tipoLog={tipoLog}")
+    LogDTOContador getCountByTipoLog(@Param("tipoLog") String tipoLog);
 
     @RequestLine("POST /log/save-log?descricao={descricao}&tipoLog={tipoLog}")
     void logPost(@Param("descricao") String descricao, @Param("tipoLog") TipoLog tipoLog);
