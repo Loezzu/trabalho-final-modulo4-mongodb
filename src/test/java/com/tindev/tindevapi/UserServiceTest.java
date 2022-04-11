@@ -2,6 +2,7 @@ package com.tindev.tindevapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.user.UserCreateDTO;
+import com.tindev.tindevapi.dto.user.UserUpdateDTO;
 import com.tindev.tindevapi.entities.AddressEntity;
 import com.tindev.tindevapi.entities.PersonInfoEntity;
 import com.tindev.tindevapi.entities.RoleEntity;
@@ -25,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.validation.constraints.Null;
 import java.util.Optional;
@@ -66,14 +68,13 @@ public class UserServiceTest {
     }
 
     @Test
-    public void deveSalvarUsuario() throws Exception {
+    public void testCreateUser() throws Exception {
         AddressEntity addressEntity = AddressEntity.builder().idAddress(1).build();
         PersonInfoEntity personInfoEntity = PersonInfoEntity.builder().idPersonInfo(1).build();
         RoleEntity roleEntity = RoleEntity.builder().roleId(1).build();
         UserEntity userEntity = UserEntity.builder().userId(1).AddressId(1).PersoInfoId(1).build();
         UserCreateDTO userCreateDTO = getUserCreate();
 
-//        when(objectMapper.convertValue(any(UserCreateDTO.class), eq(UserEntity.class))).thenReturn(userEntity);
         when(roleRepository.findById(anyInt())).thenReturn(Optional.ofNullable(roleEntity));
         when(addressRepository.findById(anyInt())).thenReturn(Optional.ofNullable(addressEntity));
         when(personInfoRepository.findById(anyInt())).thenReturn(Optional.ofNullable(personInfoEntity));
@@ -84,6 +85,25 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(any(UserEntity.class));
     }
 
+    @Test
+    public void testUpdateUser() throws Exception {
+        AddressEntity addressEntity = AddressEntity.builder().idAddress(1).build();
+        PersonInfoEntity personInfoEntity = PersonInfoEntity.builder().idPersonInfo(1).build();
+        RoleEntity roleEntity = RoleEntity.builder().roleId(1).build();
+        UserEntity userEntity = UserEntity.builder().userId(1).AddressId(1).PersoInfoId(1).password(new BCryptPasswordEncoder().encode("123")).build();
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO();
+        userUpdateDTO.setPassword("123");
+
+        when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(userEntity));
+        when(roleRepository.findById(anyInt())).thenReturn(Optional.ofNullable(roleEntity));
+        when(addressRepository.findById(anyInt())).thenReturn(Optional.ofNullable(addressEntity));
+        when(personInfoRepository.findById(anyInt())).thenReturn(Optional.ofNullable(personInfoEntity));
+        when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
+
+        userService.updateUser(userEntity.getUserId(), userUpdateDTO);
+
+        verify(userRepository, times(1)).save(any(UserEntity.class));
+    }
 
     @Test
     public void deveTestarDelete() throws Exception {
@@ -95,20 +115,12 @@ public class UserServiceTest {
         userService.deleteUser(10);
 
         verify(userRepository, times(1)).deleteById(anyInt());
-
     }
-
-
-
-
-
 
     @Test(expected = RegraDeNegocioException.class)
     public void lancarExceptionQuandoIDNaoEncontrado() throws RegraDeNegocioException {
         userService.deleteUser(20);
     }
-
-
 
     private UserCreateDTO getUserCreate(){
         UserCreateDTO userCreateDTO = new UserCreateDTO();

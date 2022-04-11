@@ -52,16 +52,17 @@ public class PersonInfoTest {
     }
 
     @Test
-    public void deveSalvarUmaPersonInfo() {
+    public void testCreatePersonInfo() {
         PersonInfoEntity personInfoEntity = PersonInfoEntity.builder().build();
         PersonInfoCreateDTO personInfoCreateDTO = getPersonInfoCreate();
+        when(objectMapper.convertValue(personInfoCreateDTO, PersonInfoEntity.class)).thenReturn(personInfoEntity);
         when(personInfoRepository.save(any(PersonInfoEntity.class))).thenReturn(personInfoEntity);
         personInfoService.createPersonInfo(personInfoCreateDTO);
         verify(personInfoRepository, times(1)).save(any(PersonInfoEntity.class));
     }
 
     @Test
-    public void deveRetornarEmailPorId() throws RegraDeNegocioException {
+    public void testEmailById() throws RegraDeNegocioException {
         PersonInfoEntity personIfoEntity = PersonInfoEntity.builder().build();
         when(personInfoRepository.findById(anyInt())).thenReturn(Optional.ofNullable(personIfoEntity));
         PersonInfoDTO personInfoDTO = getPersonInfoDTO();
@@ -70,14 +71,14 @@ public class PersonInfoTest {
     }
 
     @Test
-    public void deveRetornarExceptionNaBuscaPeloId() {
+    public void testExceptionListPersonInfo() {
         assertThrows(RegraDeNegocioException.class, () -> {
             personInfoService.listPersonInfo(10000);
         });
     }
 
     @Test
-    public void deveTestarDeletePersonInfo() throws RegraDeNegocioException {
+    public void testDeletePersonInfo() throws RegraDeNegocioException {
         PersonInfoEntity personInfoEntity = PersonInfoEntity.builder().build();
         when(personInfoRepository.findById(anyInt())).thenReturn(Optional.ofNullable(personInfoEntity));
         personInfoService.delete(1);

@@ -77,9 +77,12 @@ public class UserService {
     }
 
     public void updateUser(Integer id, UserUpdateDTO userUpdated) throws RegraDeNegocioException {
-        var userEntity = userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));
-        BeanUtils.copyProperties(userUpdated, userEntity, "password");
+        UserEntity userEntity = userRepository.findById(id).orElseThrow(() -> new RegraDeNegocioException("ID not found"));;
+        userEntity.setGender(userUpdated.getGender());
         userEntity.setPassword(new BCryptPasswordEncoder().encode(userUpdated.getPassword()));
+        userEntity.setUsername(userUpdated.getUsername());
+        userEntity.setProgLangs(userUpdated.getProgLangs());
+        userEntity.setPref(userUpdated.getPref());
         logService.logPost(TipoLog.USER,"User "+userEntity.getUsername()+  " updated");
         userRepository.save(userEntity);
     }

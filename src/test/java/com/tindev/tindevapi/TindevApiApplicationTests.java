@@ -18,25 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 public class TindevApiApplicationTests {
 
-	@Autowired
-	private UserService userService;
-
-	@Test
-	public void deverRetornarUsername() throws RegraDeNegocioException {
-		Optional<UserEntity> username = userService.findByUsername("string");
-
-		System.out.println(username.stream().findFirst().get().getUsername());
-		assertEquals("string", username.stream().findFirst().get().getUsername());
-	}
-
-	@Test
-	public void deveGerarUmaExceptionAoBuscarUsername()  {
-		assertThrows(RegraDeNegocioException.class, () -> {
-			userService.findByUsername("adasdsagsf");
-
-		});
-	}
-
 	@Test
 	public void contextLoads() {
 	}
