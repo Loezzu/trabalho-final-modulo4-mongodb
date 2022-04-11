@@ -9,6 +9,7 @@ import com.tindev.tindevapi.enums.Gender;
 import com.tindev.tindevapi.enums.Pref;
 import com.tindev.tindevapi.enums.ProgLangs;
 import com.tindev.tindevapi.repository.MatchRepository;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.LikeService;
 import com.tindev.tindevapi.service.LogService;
 import com.tindev.tindevapi.service.MatchService;
@@ -49,57 +50,46 @@ public class MatchTest {
         MockitoAnnotations.openMocks(this);
     }
 
-
     @Test
-    public void addMatchTest() throws Exception {
+    public void deveDarMatch() throws Exception {
 
-        UserEntity userEntity = new UserEntity();
-        UserEntity userEntity2 = new UserEntity();
-        MatchEntity matchEntity = new MatchEntity();
-        matchEntity.setUserEntityFirst(userEntity);
-        matchEntity.setUserEntitySecond(userEntity2);
-        matchEntity.setMatchId(1);
-        matchEntity.setNameFirst("");
-        matchEntity.setNameSecond("");
-        matchEntity.setMatchedUserFirst(userEntity.getUserId());
-        matchEntity.setMatchedUserSecond(userEntity2.getUserId());
-
-        UserDTO userDTO = new UserDTO();
-
+        UserDTO userDTO = new UserDTO(1);
         userDTO.setProgLangs(ProgLangs.JAVA);
-        when(userService.getUserById(anyInt())).thenReturn(userDTO);
-        when(matchRepository.save(any(MatchEntity.class))).thenReturn(matchEntity);
+
+        UserDTO userDTO2 = new UserDTO(2);
+        userDTO2.setProgLangs(ProgLangs.JAVA);
+
+        when(matchRepository.findByMatchedUserFirstAndMatchedUserSecond(any(),any())).thenReturn(null);
+        when(userService.getUserById(1)).thenReturn(userDTO);
+        when(userService.getUserById(2)).thenReturn(userDTO2);
+
+        matchService.addMatch(1, 2);
+
+        verify(matchRepository, times(1)).save(any(MatchEntity.class));
+
+    }
+
+
+    @Test(expected = RegraDeNegocioException.class)
+    public void lancarExcecaoSeOMatchJaExiste() throws Exception {
+
+        MatchEntity match = new MatchEntity(1,1,"teste",2,"teste2",new UserEntity(),new UserEntity());
+
+        when(matchRepository.findByMatchedUserFirstAndMatchedUserSecond(any(),any())).thenReturn(match);
 
         matchService.addMatch(1,2);
-
-        verify(matchRepository).save(matchEntity);
-
-
     }
 
+    @Test
+    public void testarChamadaDeleteMatch() throws Exception {
 
-    private UserCreateDTO getUserCreate(){
-        UserCreateDTO userCreateDTO = new UserCreateDTO();
-        userCreateDTO.setPref(Pref.BOTH);
-        userCreateDTO.setGender(Gender.FEMALE);
-        userCreateDTO.setUsername("");
-        userCreateDTO.setPassword("123");
-        userCreateDTO.setAddressId(1);
-        userCreateDTO.setPersoInfoId(1);
-        userCreateDTO.setProgLangs(ProgLangs.JAVA);
-        return userCreateDTO;
-    }
+        MatchEntity match = new MatchEntity();
 
-    private UserCreateDTO getUserCreate2(){
-        UserCreateDTO userCreateDTO = new UserCreateDTO();
-        userCreateDTO.setPref(Pref.BOTH);
-        userCreateDTO.setGender(Gender.FEMALE);
-        userCreateDTO.setUsername("");
-        userCreateDTO.setPassword("123");
-        userCreateDTO.setAddressId(2);
-        userCreateDTO.setPersoInfoId(2);
-        userCreateDTO.setProgLangs(ProgLangs.JAVA);
-        return userCreateDTO;
+        when(matchRepository.findById(anyInt())).thenReturn(Optional.of(match));
+        matchService.deleteMatch(10);
+
+        verify(matchRepository, times(1)).deleteById(10);
+
     }
 
 
