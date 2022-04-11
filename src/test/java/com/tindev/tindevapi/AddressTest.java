@@ -3,10 +3,7 @@ package com.tindev.tindevapi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tindev.tindevapi.dto.address.AddressCreateDTO;
-import com.tindev.tindevapi.dto.address.AddressDTO;
-import com.tindev.tindevapi.dto.personInfo.PersonInfoCreateDTO;
 import com.tindev.tindevapi.entities.AddressEntity;
-import com.tindev.tindevapi.entities.PersonInfoEntity;
 import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.AddressService;
@@ -19,14 +16,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -80,6 +73,20 @@ public class AddressTest {
         when(addressRepository.findById(anyInt())).thenReturn(Optional.ofNullable(getAddressEntity()));
         addressService.deleteAddress(1);
         verify(addressRepository, times(1)).deleteById(anyInt());
+    }
+
+    @Test
+    public void deveAtualizarEndereco() throws RegraDeNegocioException {
+
+        AddressEntity addressEntity = getAddressEntity();
+        AddressCreateDTO addressCreateDTO = getAddressCreate();
+
+        when(addressRepository.findById(anyInt())).thenReturn(Optional.ofNullable(addressEntity));
+        when(objectMapper.convertValue(eq(addressRepository.findById(anyInt())), eq(AddressEntity.class))).thenReturn(addressEntity);
+
+        addressService.updateAddress(addressCreateDTO, 10);
+
+        verify(addressRepository,times(1)).save(addressEntity);
     }
 
 

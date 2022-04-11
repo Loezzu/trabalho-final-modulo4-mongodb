@@ -11,11 +11,11 @@ import com.tindev.tindevapi.enums.Gender;
 import com.tindev.tindevapi.enums.Pref;
 import com.tindev.tindevapi.enums.ProgLangs;
 import com.tindev.tindevapi.enums.Roles;
-import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.repository.AddressRepository;
 import com.tindev.tindevapi.repository.PersonInfoRepository;
 import com.tindev.tindevapi.repository.RoleRepository;
 import com.tindev.tindevapi.repository.UserRepository;
+import com.tindev.tindevapi.repository.exceptions.RegraDeNegocioException;
 import com.tindev.tindevapi.service.AddressService;
 import com.tindev.tindevapi.service.LogService;
 import com.tindev.tindevapi.service.UserService;
@@ -28,7 +28,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.validation.constraints.Null;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -95,11 +94,9 @@ public class UserServiceTest {
         userUpdateDTO.setPassword("123");
 
         when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(userEntity));
-        when(roleRepository.findById(anyInt())).thenReturn(Optional.ofNullable(roleEntity));
-        when(addressRepository.findById(anyInt())).thenReturn(Optional.ofNullable(addressEntity));
-        when(personInfoRepository.findById(anyInt())).thenReturn(Optional.ofNullable(personInfoEntity));
         when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
 
+        assert userEntity != null;
         userService.updateUser(userEntity.getUserId(), userUpdateDTO);
 
         verify(userRepository, times(1)).save(any(UserEntity.class));
